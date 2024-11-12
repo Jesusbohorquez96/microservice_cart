@@ -13,4 +13,6 @@ import static com.hexagonal.microservice_cart.constants.ValidationConstants.*;
 public interface CartEntityMapper {
 
     CartEntity toEntity(Cart cart);
+
+    Cart toDomain(CartEntity cartEntity);
 }

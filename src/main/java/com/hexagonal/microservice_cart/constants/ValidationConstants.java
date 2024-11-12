@@ -2,7 +2,10 @@ package com.hexagonal.microservice_cart.constants;
 
 public class ValidationConstants {
 
-    public static final int ZERO = 0;
+    public static final long ZERO_L = 0L;
+    public static final int ONE = 1;
+    public static final int TWO = 2;
+    public static final int THREE = 3;
     public static final int SEVEN = 7;
     public static final int NAME_LENGTH = 50;
     public static final int STATUS_LENGTH = 60;
@@ -38,6 +41,11 @@ public class ValidationConstants {
     public static final String INCREASE_STOCK_ARTICLE_ID = "/increase-stock/{articleId}";
     public static final String ARTICLE_ID = "articleId";
     public static final String ADDITIONAL_STOCK = "additionalStock";
+
+    public static final String ARTICLE_REMOVED_CART = "Item removed from cart";
+    public static final String DELETE_ARTICLE = "An error occurred while deleting the article";
+    public static final String ARTICLE_NOT_IN_CART = "The article is not in the cart";
+    public static final String CATEGORY_LIMIT = "You cannot add more than 3 items from the category: ";
 
     public static final String ROL = "rol";
     public static final String PRIVATE = "294A404E635266556A586E327235753878214125442A472D4B6150645367566B";

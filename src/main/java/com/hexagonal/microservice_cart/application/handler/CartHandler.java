@@ -33,4 +33,8 @@ public class CartHandler implements ICartHandler {
         Cart cart = cartRequestMapper.toCart(cartRequest);
         cartServicePort.addItemsToCart(cart);
     }
+
+    public void removeItemFromCart(Long userId, Long articleId) {
+        cartServicePort.removeItemFromCart(userId, articleId);
+    }
 }

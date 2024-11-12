@@ -6,7 +6,12 @@ import com.hexagonal.microservice_cart.infrastructure.output.jpa.entity.CartEnti
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.mapper.CartEntityMapper;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.repository.ICartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
 @RequiredArgsConstructor
 public class CartJpaAdapter implements ICartPersistencePort {
 
@@ -29,5 +34,19 @@ public class CartJpaAdapter implements ICartPersistencePort {
     public void addItemsToCart(Cart cart) {
         CartEntity cartEntity = cartEntityMapper.toEntity(cart);
         cartRepository.save(cartEntity);
+    }
+
+    @Override
+    public List<Cart> getCartItemsByUserId(Long userId) {
+        List<CartEntity> cartEntities = cartRepository.findByUserId(userId);
+        return cartEntities.stream()
+                .map(cartEntityMapper::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void removeItemFromCart(Cart cart) {
+        CartEntity cartEntity = cartEntityMapper.toEntity(cart);
+        cartRepository.delete(cartEntity);
     }
 }

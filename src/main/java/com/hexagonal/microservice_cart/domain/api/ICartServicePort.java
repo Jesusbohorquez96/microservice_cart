@@ -9,4 +9,6 @@ public interface ICartServicePort {
     void createCart(Cart cart);
 
     void addItemsToCart(Cart cart);
+
+    void removeItemFromCart(Long userId, Long articleId);
 }

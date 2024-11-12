@@ -1,8 +1,10 @@
 package com.hexagonal.microservice_cart.infrastructure.configuration;
 
+import com.hexagonal.microservice_cart.domain.api.ArticleService;
 import com.hexagonal.microservice_cart.domain.api.ICartServicePort;
 import com.hexagonal.microservice_cart.domain.spi.ICartPersistencePort;
 import com.hexagonal.microservice_cart.domain.usecase.CartUseCase;
+import com.hexagonal.microservice_cart.infrastructure.adapters.feign_client.ArticleClient;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.adapter.CartJpaAdapter;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.mapper.CartEntityMapper;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.repository.ICartRepository;
@@ -17,6 +19,7 @@ public class BeamConfigurationCart {
 
     private final ICartRepository cartRepository;
     private final CartEntityMapper cartEntityMapper;
+    private final ArticleClient articleClient;
 
     @Bean
     public ICartPersistencePort cartPersistencePort() {
@@ -24,8 +27,13 @@ public class BeamConfigurationCart {
     }
 
     @Bean
+    public ArticleService ArticleService() {
+        return new ArticleService(articleClient);
+    }
+
+    @Bean
     public ICartServicePort cartServicePort() {
-        return new CartUseCase(cartPersistencePort()) {
+        return new CartUseCase(cartPersistencePort(), ArticleService() ) {
         };
     }
 

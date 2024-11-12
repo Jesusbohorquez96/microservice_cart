@@ -11,4 +11,8 @@ public interface ICartPersistencePort {
     void createCart(Cart cart);
 
     void addItemsToCart(Cart cart);
+
+    List<Cart> getCartItemsByUserId(Long userId);
+
+    void removeItemFromCart(Cart cart);
 }

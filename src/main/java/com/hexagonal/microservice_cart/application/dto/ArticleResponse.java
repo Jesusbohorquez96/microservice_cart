@@ -21,8 +21,4 @@ public class ArticleResponse {
     private List<CategoryResponse> articleCategories;
     private BrandResponse articleBrand;
 
-
-    public String getCategory() {
-        return "";
-    }
 }
