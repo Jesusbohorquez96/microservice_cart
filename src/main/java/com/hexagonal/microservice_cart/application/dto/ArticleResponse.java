@@ -20,5 +20,4 @@ public class ArticleResponse {
     private Double articlePrice;
     private List<CategoryResponse> articleCategories;
     private BrandResponse articleBrand;
-
 }

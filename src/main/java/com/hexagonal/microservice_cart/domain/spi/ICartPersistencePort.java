@@ -1,6 +1,8 @@
 package com.hexagonal.microservice_cart.domain.spi;
 
 import com.hexagonal.microservice_cart.domain.model.Cart;
+import com.hexagonal.microservice_cart.infrastructure.output.jpa.entity.CartEntity;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,4 +17,6 @@ public interface ICartPersistencePort {
     List<Cart> getCartItemsByUserId(Long userId);
 
     void removeItemFromCart(Cart cart);
+
+    Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean sortDirection);
 }

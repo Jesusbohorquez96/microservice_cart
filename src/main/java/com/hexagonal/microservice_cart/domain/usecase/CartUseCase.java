@@ -5,6 +5,10 @@ import com.hexagonal.microservice_cart.domain.api.ArticleService;
 import com.hexagonal.microservice_cart.domain.api.ICartServicePort;
 import com.hexagonal.microservice_cart.domain.model.Cart;
 import com.hexagonal.microservice_cart.domain.spi.ICartPersistencePort;
+import com.hexagonal.microservice_cart.infrastructure.exception.InsufficientStockException;
+import com.hexagonal.microservice_cart.infrastructure.output.jpa.entity.CartEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Map;
@@ -43,6 +47,10 @@ public class CartUseCase implements ICartServicePort {
                 throw new IllegalArgumentException(CATEGORY_LIMIT + category);
             }
         }
+        int availableStock = articleService.getArticleById(cart.getArticleId()).getArticleStock();
+        if (cart.getQuantity() > availableStock) {
+            throw new InsufficientStockException(ARTICLE_STOCK_INSUFFICIENT + cart.getArticleId());
+        }
 
         cartPersistencePort.addItemsToCart(cart);
     }
@@ -67,5 +75,16 @@ public class CartUseCase implements ICartServicePort {
                 .orElseThrow(() -> new NoSuchElementException(ARTICLE_NOT_IN_CART));
 
         cartPersistencePort.removeItemFromCart(itemToRemove);
+    }
+
+    @Override
+    public Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean ascending) {
+        Sort sort = Sort.by(USER_ID);
+        if (Boolean.parseBoolean(String.valueOf(ascending))) {
+            sort = sort.ascending();
+        } else {
+            sort = sort.descending();
+        }
+        return cartPersistencePort.getCartByUserId(userId, page, size, sortBy, ascending);
     }
 }

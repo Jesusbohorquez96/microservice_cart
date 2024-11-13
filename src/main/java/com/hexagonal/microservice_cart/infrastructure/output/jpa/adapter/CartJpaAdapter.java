@@ -6,6 +6,9 @@ import com.hexagonal.microservice_cart.infrastructure.output.jpa.entity.CartEnti
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.mapper.CartEntityMapper;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.repository.ICartRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,5 +51,12 @@ public class CartJpaAdapter implements ICartPersistencePort {
     public void removeItemFromCart(Cart cart) {
         CartEntity cartEntity = cartEntityMapper.toEntity(cart);
         cartRepository.delete(cartEntity);
+    }
+
+    @Override
+    public Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean sortDirection) {
+        Sort.Direction direction = Sort.Direction.fromString(sortDirection ? "ASC" : "DESC");
+        PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        return cartRepository.findByUserId(userId, pageable);
     }
 }

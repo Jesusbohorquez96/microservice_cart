@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -12,12 +11,10 @@ import java.time.LocalDateTime;
 @Setter
 public class CartResponse {
 
+    private Long id;
+    private Long userId;
     private Long articleId;
-
     private int quantity;
-
-    private LocalDate creationDate;
-
-    private LocalDate updateDate;
-
+    private LocalDateTime creationDate;
+    private LocalDateTime updateDate;
 }

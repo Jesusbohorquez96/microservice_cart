@@ -1,9 +1,12 @@
 package com.hexagonal.microservice_cart.infrastructure.input.rest;
 
 import com.hexagonal.microservice_cart.application.dto.CartRequest;
+import com.hexagonal.microservice_cart.application.dto.CartResponse;
 import com.hexagonal.microservice_cart.application.handler.CartHandler;
+import com.hexagonal.microservice_cart.infrastructure.exception.InsufficientStockException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,7 +19,9 @@ import java.util.Collections;
 import java.util.NoSuchElementException;
 
 import static com.hexagonal.microservice_cart.constants.ValidationConstants.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping(CARTS_URL)
 @RequiredArgsConstructor
@@ -36,6 +41,9 @@ public class CartRestController {
 
             return ResponseEntity.ok(Collections.singletonMap(MESSAGE, CART_SAVED_SUCCESSFULLY));
 
+        } catch (InsufficientStockException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap(MESSAGE, e.getMessage()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Collections.singletonMap(MESSAGE, e.getMessage()));
@@ -62,6 +70,26 @@ public class CartRestController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Collections.singletonMap(MESSAGE, DELETE_ARTICLE));
+        }
+    }
+
+    @GetMapping(BASE_URL)
+    @PreAuthorize(ROL_CUSTOMER)
+    public ResponseEntity<Page<CartResponse>> getCartByUser(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDirection
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        try {
+            int userId = Integer.parseInt(authentication.getName());
+
+            Page<CartResponse> cartItems = cartHandler.getCartByUserId(userId, page, size, sortBy, sortDirection);
+
+            return ResponseEntity.ok(cartItems);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }
