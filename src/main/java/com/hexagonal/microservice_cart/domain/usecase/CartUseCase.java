@@ -56,16 +56,6 @@ public class CartUseCase implements ICartServicePort {
     }
 
     @Override
-    public void addItemsToCart(Cart cart) {
-        cartPersistencePort.saveCart(cart);
-    }
-
-    @Override
-    public void createCart(Cart cart) {
-        cartPersistencePort.createCart(cart);
-    }
-
-    @Override
     public void removeItemFromCart(Long userId, Long articleId) {
         List<Cart> userCartItems = cartPersistencePort.getCartItemsByUserId(userId);
 
