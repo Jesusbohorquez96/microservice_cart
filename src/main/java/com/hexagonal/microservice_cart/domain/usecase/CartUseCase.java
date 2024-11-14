@@ -29,6 +29,7 @@ public class CartUseCase implements ICartServicePort {
 
     @Override
     public void saveCart(Cart cart) {
+
         List<String> articleCategories = articleService.getArticleById(cart.getArticleId()).getArticleCategories()
                 .stream()
                 .map(CategoryResponse::getCategoryName)
@@ -69,6 +70,7 @@ public class CartUseCase implements ICartServicePort {
 
     @Override
     public Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean ascending) {
+
         Sort sort = Sort.by(USER_ID);
         if (Boolean.parseBoolean(String.valueOf(ascending))) {
             sort = sort.ascending();

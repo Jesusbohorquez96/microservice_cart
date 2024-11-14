@@ -15,4 +15,6 @@ import static com.hexagonal.microservice_cart.constants.ValidationConstants.*;
 public interface CartResponseMapper {
 
     CartResponse toCartResponse(CartEntity cartEntity);
+
+    CartResponse toCartResponse(Cart cartEntity);
 }

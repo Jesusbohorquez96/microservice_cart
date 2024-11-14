@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Getter
@@ -17,4 +18,11 @@ public class CartResponse {
     private int quantity;
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
+
+    private String articleName;
+    private String articleDescription;
+    private Integer articleStock;
+    private Double articlePrice;
+    private List<CategoryResponse> articleCategories;
+    private BrandResponse articleBrand;
 }
