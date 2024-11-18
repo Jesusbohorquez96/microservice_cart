@@ -29,7 +29,6 @@ public class CartUseCase implements ICartServicePort {
 
     @Override
     public void saveCart(Cart cart) {
-
         List<String> articleCategories = articleService.getArticleById(cart.getArticleId()).getArticleCategories()
                 .stream()
                 .map(CategoryResponse::getCategoryName)
@@ -69,7 +68,7 @@ public class CartUseCase implements ICartServicePort {
     }
 
     @Override
-    public Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean ascending) {
+    public Page<CartEntity> getCartByUserId(Long userId, int page, int size, String sortBy, boolean ascending) {
 
         Sort sort = Sort.by(USER_ID);
         if (Boolean.parseBoolean(String.valueOf(ascending))) {
@@ -78,5 +77,18 @@ public class CartUseCase implements ICartServicePort {
             sort = sort.descending();
         }
         return cartPersistencePort.getCartByUserId(userId, page, size, sortBy, ascending);
+    }
+
+    @Override
+    public List<Long> getArticleIds(Long userId) {
+        return cartPersistencePort.getCartItemsByUserId(userId)
+                .stream()
+                .map(Cart::getArticleId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public CartEntity findProductByUserIdAndProductId(Long userId, Long articleId) {
+        return cartPersistencePort.findProductByUserIdAndProductId(userId, articleId);
     }
 }

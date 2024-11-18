@@ -16,4 +16,5 @@ public class ArticleService {
     public ArticleResponse getArticleById(Long articleId) {
        return articleClient.getArticle(articleId);
     }
+
 }

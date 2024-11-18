@@ -14,5 +14,7 @@ public interface ICartRepository extends JpaRepository<CartEntity, Long> {
 
     List<CartEntity> findByUserId(Long userId);
 
-    Page<CartEntity> findByUserId(int userId, Pageable pageable);
+    Page<CartEntity> findByUserId(Long userId, Pageable pageable);
+
+    CartEntity findByUserIdAndArticleId(Long userId, Long articleId);
 }

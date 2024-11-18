@@ -18,5 +18,7 @@ public interface ICartPersistencePort {
 
     void removeItemFromCart(Cart cart);
 
-    Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean sortDirection);
+    Page<CartEntity> getCartByUserId(Long userId, int page, int size, String sortBy, boolean sortDirection);
+
+    CartEntity findProductByUserIdAndProductId(Long userId, Long articleId);
 }

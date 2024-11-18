@@ -54,9 +54,15 @@ public class CartJpaAdapter implements ICartPersistencePort {
     }
 
     @Override
-    public Page<CartEntity> getCartByUserId(int userId, int page, int size, String sortBy, boolean sortDirection) {
+    public Page<CartEntity> getCartByUserId(Long userId, int page, int size, String sortBy, boolean sortDirection) {
         Sort.Direction direction = Sort.Direction.fromString(sortDirection ? "ASC" : "DESC");
+
         PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
         return cartRepository.findByUserId(userId, pageable);
+    }
+
+    @Override
+    public CartEntity findProductByUserIdAndProductId(Long userId, Long articleId) {
+        return cartRepository.findByUserIdAndArticleId(userId, articleId);
     }
 }

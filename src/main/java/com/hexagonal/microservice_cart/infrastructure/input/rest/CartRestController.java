@@ -83,13 +83,32 @@ public class CartRestController {
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {
-            int userId = Integer.parseInt(authentication.getName());
+            Long userId = Long.parseLong(authentication.getName());
 
             Page<CartResponse> cartItems = cartHandler.getCartByUserId(userId, page, size, sortBy, sortDirection);
 
             return ResponseEntity.ok(cartItems);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/articles/filter")
+    @PreAuthorize(ROL_CUSTOMER)
+    public ResponseEntity<Page<CartResponse>> getArticlesByFilter(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sortBy,
+            @RequestParam(defaultValue = "ASC") String sortDirection,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String brandName
+    ) {
+        try {
+            Page<CartResponse> articles = cartHandler.getFilteredArticles(page, size, sortBy, sortDirection, categoryName, brandName);
+            return ResponseEntity.ok(articles);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(null);
         }
     }
 }
