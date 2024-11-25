@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.hexagonal.microservice_cart.constants.ValidationConstants.*;
@@ -29,7 +30,7 @@ public class CartRestController {
 
     private final CartHandler cartHandler;
 
-    @PostMapping(BASE_URL)
+    @PostMapping("/")
     @PreAuthorize(ROL_CUSTOMER)
     public ResponseEntity<?> saveCartIn(@Valid @RequestBody CartRequest cartRequest) {
         try {
@@ -53,7 +54,7 @@ public class CartRestController {
         }
     }
 
-    @DeleteMapping(BASE_URL + "{articleId}")
+    @DeleteMapping("/" + "{articleId}")
     @PreAuthorize(ROL_CUSTOMER)
     public ResponseEntity<?> removeItemFromCart(@PathVariable Long articleId) {
         try {
@@ -73,19 +74,15 @@ public class CartRestController {
         }
     }
 
-    @GetMapping(BASE_URL)
+    @GetMapping("/paginated")
     @PreAuthorize(ROL_CUSTOMER)
-    public ResponseEntity<Page<CartResponse>> getCartByUser(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "ASC") String sortDirection
+    public ResponseEntity<List<CartResponse>> getCartByUser(
     ) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         try {
             Long userId = Long.parseLong(authentication.getName());
 
-            Page<CartResponse> cartItems = cartHandler.getCartByUserId(userId, page, size, sortBy, sortDirection);
+            List<CartResponse> cartItems = cartHandler.getCartByUserId(userId);
 
             return ResponseEntity.ok(cartItems);
         } catch (Exception e) {
@@ -109,6 +106,22 @@ public class CartRestController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(null);
+        }
+    }
+
+    @DeleteMapping("/clear")
+    @PreAuthorize(ROL_CUSTOMER)
+    public ResponseEntity<?> clearCart() {
+        try {
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Long userId = Long.valueOf(authentication.getName());
+
+            cartHandler.clearCartByUserId(userId);
+
+            return ResponseEntity.ok(Collections.singletonMap(MESSAGE, "Carrito eliminado con éxito"));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap(MESSAGE, AN_ERROR_OCCURRED));
         }
     }
 }

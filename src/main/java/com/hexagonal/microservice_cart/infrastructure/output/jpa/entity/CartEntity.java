@@ -2,10 +2,7 @@ package com.hexagonal.microservice_cart.infrastructure.output.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-
 import static com.hexagonal.microservice_cart.constants.ValidationConstants.*;
 
 @Entity
@@ -48,5 +45,6 @@ public class CartEntity {
     protected void onUpdate() {
         this.updateDate = LocalDateTime.now();
     }
+
 }
 

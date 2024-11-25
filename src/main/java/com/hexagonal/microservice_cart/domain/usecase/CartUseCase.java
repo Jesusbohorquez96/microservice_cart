@@ -7,8 +7,6 @@ import com.hexagonal.microservice_cart.domain.model.Cart;
 import com.hexagonal.microservice_cart.domain.spi.ICartPersistencePort;
 import com.hexagonal.microservice_cart.infrastructure.exception.InsufficientStockException;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.entity.CartEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort;
 
 import java.util.List;
 import java.util.Map;
@@ -68,15 +66,21 @@ public class CartUseCase implements ICartServicePort {
     }
 
     @Override
-    public Page<CartEntity> getCartByUserId(Long userId, int page, int size, String sortBy, boolean ascending) {
+    public List<CartEntity> getCartByUserId(Long userId) {
+        return cartPersistencePort.getCartByUserId(userId)
+                .stream()
+                .map(cart -> {
+                    CartEntity cartEntity = new CartEntity();
+                    cartEntity.setId(cart.getId());
+                    cartEntity.setArticleId(cart.getArticleId());
+                    cartEntity.setUserId(cart.getUserId());
+                    cartEntity.setQuantity(cart.getQuantity());
+                    cartEntity.setUpdateDate(cart.getUpdateDate());
+                    cartEntity.setCreationDate(cart.getCreationDate());
 
-        Sort sort = Sort.by(USER_ID);
-        if (Boolean.parseBoolean(String.valueOf(ascending))) {
-            sort = sort.ascending();
-        } else {
-            sort = sort.descending();
-        }
-        return cartPersistencePort.getCartByUserId(userId, page, size, sortBy, ascending);
+                    return cartEntity;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -90,5 +94,10 @@ public class CartUseCase implements ICartServicePort {
     @Override
     public CartEntity findProductByUserIdAndProductId(Long userId, Long articleId) {
         return cartPersistencePort.findProductByUserIdAndProductId(userId, articleId);
+    }
+
+    @Override
+    public void clearCartByUserId(Long userId) {
+        cartPersistencePort.clearCartByUserId(userId);
     }
 }

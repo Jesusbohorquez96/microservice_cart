@@ -29,8 +29,6 @@ public class Cart {
         this.articlePrice = articlePrice;
     }
 
-    public Cart() {
-    }
 
     public Long getId() {
         return id;

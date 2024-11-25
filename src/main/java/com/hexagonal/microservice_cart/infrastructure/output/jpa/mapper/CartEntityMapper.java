@@ -15,4 +15,6 @@ public interface CartEntityMapper {
     CartEntity toEntity(Cart cart);
 
     Cart toDomain(CartEntity cartEntity);
+
+    Cart toResponse(CartEntity cartEntity);
 }

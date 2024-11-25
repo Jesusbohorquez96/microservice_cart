@@ -6,9 +6,6 @@ import com.hexagonal.microservice_cart.infrastructure.output.jpa.entity.CartEnti
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.mapper.CartEntityMapper;
 import com.hexagonal.microservice_cart.infrastructure.output.jpa.repository.ICartRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,7 +38,7 @@ public class CartJpaAdapter implements ICartPersistencePort {
 
     @Override
     public List<Cart> getCartItemsByUserId(Long userId) {
-        List<CartEntity> cartEntities = cartRepository.findByUserId(userId);
+        List<CartEntity> cartEntities = cartRepository.findItemsByUserId(userId);
         return cartEntities.stream()
                 .map(cartEntityMapper::toDomain)
                 .collect(Collectors.toList());
@@ -54,15 +51,20 @@ public class CartJpaAdapter implements ICartPersistencePort {
     }
 
     @Override
-    public Page<CartEntity> getCartByUserId(Long userId, int page, int size, String sortBy, boolean sortDirection) {
-        Sort.Direction direction = Sort.Direction.fromString(sortDirection ? "ASC" : "DESC");
-
-        PageRequest pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
-        return cartRepository.findByUserId(userId, pageable);
+    public List<Cart> getCartByUserId(Long userId) {
+        List<CartEntity> cartEntities = cartRepository.findItemsByUserId(userId);
+        return cartEntities.stream()
+                .map(cartEntityMapper::toResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public CartEntity findProductByUserIdAndProductId(Long userId, Long articleId) {
         return cartRepository.findByUserIdAndArticleId(userId, articleId);
+    }
+
+    @Override
+    public void clearCartByUserId(Long userId) {
+        cartRepository.deleteByUserId(userId);
     }
 }

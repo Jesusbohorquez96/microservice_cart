@@ -10,8 +10,6 @@ import lombok.Setter;
 public class CartRequest {
 
     private Long userId;
-
     private Long articleId;
-
     private int quantity;
 }

@@ -17,6 +17,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,22 +36,22 @@ public class CartHandler implements ICartHandler {
     }
 
     @Override
-    public Page<CartResponse> getCartByUserId(Long userId, int page, int size, String sortBy, String sortDirection) {
-        Page<CartEntity> cartEntities = cartServicePort.getCartByUserId(userId, page, size, sortBy, Boolean.parseBoolean(sortDirection));
-        return cartEntities.map(cartEntity -> {
-            CartResponse cartResponse = cartResponseMapper.toCartResponse(cartEntity);
+    public List<CartResponse> getCartByUserId(Long userId) {
+        List<CartEntity> cartEntities = cartServicePort.getCartByUserId(userId);
+        return cartEntities.stream()
+                .map(cartEntity -> {
+                    CartResponse cartResponse = cartResponseMapper.toCartResponse(cartEntity);
+                    ArticleResponse article = articleClient.getArticle(cartEntity.getArticleId());
+                    cartResponse.setArticleName(article.getArticleName());
+                    cartResponse.setArticleDescription(article.getArticleDescription());
+                    cartResponse.setArticleStock(article.getArticleStock());
+                    cartResponse.setArticlePrice(article.getArticlePrice());
+                    cartResponse.setArticleCategories(article.getArticleCategories());
+                    cartResponse.setArticleBrand(article.getArticleBrand());
 
-            ArticleResponse article = articleClient.getArticle(cartEntity.getArticleId());
-
-            cartResponse.setArticleName(article.getArticleName());
-            cartResponse.setArticleDescription(article.getArticleDescription());
-            cartResponse.setArticleStock(article.getArticleStock());
-            cartResponse.setArticlePrice(article.getArticlePrice());
-            cartResponse.setArticleCategories(article.getArticleCategories());
-            cartResponse.setArticleBrand(article.getArticleBrand());
-
-            return cartResponse;
-        });
+                    return cartResponse;
+                })
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -81,6 +82,11 @@ public class CartHandler implements ICartHandler {
 
         });
         return cartResponses;
+    }
+
+    @Override
+    public void clearCartByUserId(Long userId) {
+        cartServicePort.clearCartByUserId(userId);
     }
 
     public void removeItemFromCart(Long userId, Long articleId) {

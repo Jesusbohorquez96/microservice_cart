@@ -27,13 +27,13 @@ public class BeamConfigurationCart {
     }
 
     @Bean
-    public ArticleService ArticleService() {
+    public ArticleService articleService() {
         return new ArticleService(articleClient);
     }
 
     @Bean
     public ICartServicePort cartServicePort() {
-        return new CartUseCase(cartPersistencePort(), ArticleService() ) {
+        return new CartUseCase(cartPersistencePort(), articleService() ) {
         };
     }
 
